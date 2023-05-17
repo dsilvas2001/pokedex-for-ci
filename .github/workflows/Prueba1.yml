@@ -12,3 +12,6 @@ jobs:
       - name: Echo the message
         run: |
           echo "Hola Donald!"
+      - name: Fecha del Push
+        run: date
+      - run: ls -l
