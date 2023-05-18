@@ -20,5 +20,7 @@ jobs:
       # Muestras los errores del codigo importante
       - name: Lint
         run: npm run eslint
+      - name: Build
+        run: npm run build
       - name: Test
         run: npm test
