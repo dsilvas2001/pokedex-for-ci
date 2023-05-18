@@ -16,8 +16,8 @@ jobs:
         with:
           node-version: 18
       - name: Install dependencies
-        run: npm install
-      # Me asegura que solo se suba codigo correctos
+        run: npm install --no-audit --no-fund --no-optional
+      # Muestras los errores del codigo importante
       - name: Lint
         run: npm run eslint
       - name: Build
