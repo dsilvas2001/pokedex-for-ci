@@ -20,3 +20,7 @@ jobs:
       # Me asegura que solo se suba codigo correctos
       - name: Lint
         run: npm run eslint
+      - name: Build
+        run: npm run build
+      - name: Test
+        run: npm test
