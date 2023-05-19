@@ -4,4 +4,4 @@ module.exports = {
       // implementa aquí tus eventos de Node.js si es necesario
     }
   }
-};
+}
