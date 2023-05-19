@@ -1,3 +1,3 @@
-{
-  "video"= false;
-}
+module.exports = {
+  video: false
+};
