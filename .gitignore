@@ -1,5 +1,9 @@
 dist/
 node_modules/
 cypress/plugins
-# cypress/support
+cypress/support/comands.js
+cypress/support/component-index.html
+
+cypress/support/component.js
+
 cypress/videos
