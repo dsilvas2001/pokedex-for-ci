@@ -107,12 +107,3 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      # - name: Desploy Heroku
-      #   if: ${{ github.event_name == 'push' }}
-      #   uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
-      #   with:
-      #     heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-      #     heroku_app_name: ${{secrets.HEROKU_PROYECTO_CARPETA}} #Must be unique in Heroku
-      #     heroku_email: ${{secrets.HEROKU_API_EMAIL}}
-      #     healthcheck: "http://${{secrets.HEROKU_PROYECTO_CARPETA}}.herokuapp/health"
-      #     rollbackonhealthcheckfailed: true
