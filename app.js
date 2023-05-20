@@ -4,7 +4,7 @@ const { version } = require('./package.json')
 
 // Heroku dynamically sets a port
 const PORT = process.env.PORT || 8080
-
+//importante una ruta que me dice que responde correctamente
 app.get('/health', (req, res) => {
   res.send('ok')
 })

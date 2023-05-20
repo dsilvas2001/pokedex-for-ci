@@ -2,12 +2,21 @@ name: Deployment Pipeline
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize]
 jobs:
-  deploy:
-    #d
-    # Maquina Virtual
+  avoid_reduncy:
+    runs-on: ubuntu-latest
+    steps:
+      #Se ejecuta el workflow mas de una vez en el caso que se en paralelo la ultima se cancelara
+      - name: Cancel Previous Redundant Builds
+        uses: styfle/cancel-workflow-action@0.10.0
+        with:
+          access_token: ${{ github.token }}
+
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -22,19 +31,88 @@ jobs:
       # Muestras los errores del codigo importante
       - name: Lint
         run: npm run eslint
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14
+      - name: Install dependencies
+        #run: npm install --no-audit --no-fund --no-optional
+        run: npm ci
       - name: Build
-        run: npm run build
+        run: npm run
+      #Artefacto este movimiento lo puedes utilizar en otro metodo empaquetado el archivo Dist
+      - uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: dist
+
+  test:
+    #Needs Hace que se ejecute despues  de esos dos metodos
+    needs: [lint, build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14
+      - name: Install dependencies
+        #run: npm install --no-audit --no-fund --no-optional
+        run: npm ci
+      #Artefacto este movimiento lo que hace es descargar el archivo dist empaquetado
+      - uses: actions/download-artifact@v3
+        with:
+          name: dist
+          path: dist
       - name: Test
         run: npm test
+  e2e:
+    needs: [lint, build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14
+      - name: Install dependencies
+        #run: npm install --no-audit --no-fund --no-optional
+        run: npm ci
+      #Artefacto este movimiento lo que hace es descargar el archivo dist empaquetado
+      - uses: actions/download-artifact@v3
+        with:
+          name: dist
+          path: dist
       - name: E2E tests
         uses: cypress-io/github-action@v5
         with:
           command: npm run test:e2e
           start: npm run start-test
           wait-on: http://localhost:8080
+
+  deploy_Pipeline:
+    needs: [test, e2e]
+    #d
+    # Maquina Virtual
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       # - name: Desploy Heroku
+      #   if: ${{ github.event_name == 'push' }}
       #   uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
       #   with:
       #     heroku_api_key: ${{secrets.HEROKU_API_KEY}}
       #     heroku_app_name: ${{secrets.HEROKU_PROYECTO_CARPETA}} #Must be unique in Heroku
       #     heroku_email: ${{secrets.HEROKU_API_EMAIL}}
+      #     healthcheck: "http://${{secrets.HEROKU_PROYECTO_CARPETA}}.herokuapp/health"
+      #     rollbackonhealthcheckfailed: true
