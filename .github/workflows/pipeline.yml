@@ -45,7 +45,7 @@ jobs:
         #run: npm install --no-audit --no-fund --no-optional
         run: npm ci
       - name: Build
-        run: npm run
+        run: npm run build
       #Artefacto este movimiento lo puedes utilizar en otro metodo empaquetado el archivo Dist
       - uses: actions/upload-artifact@v3
         with:
